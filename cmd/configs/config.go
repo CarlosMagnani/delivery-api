@@ -1,6 +1,10 @@
 package configs
 
-import "github.com/spf13/viper"
+import (
+	"fmt"
+
+	"github.com/spf13/viper"
+)
 
 var cfg *config
 
@@ -22,20 +26,25 @@ type DBConfig struct {
 }
 
 func init() {
-	viper.SetDefault("api.port", "4000")
+	viper.SetDefault("api.port", 4000)
 	viper.SetDefault("database.host", "localhost")
-	viper.SetDefault("database.port", "5432")
+	viper.SetDefault("database.port", 5432)
+	viper.SetDefault("database.user", "process")
+    viper.SetDefault("database.password", "processdb")
+    viper.SetDefault("database.database", "delivery")
+	
 }
 
 func Load() error {
 	viper.SetConfigName("config")
-	viper.SetConfigType("json")
+	viper.SetConfigType("toml")
 	viper.AddConfigPath(".")
 
 	err := viper.ReadInConfig()
 
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			fmt.Println(err)
 			return err
 		}
 	}
