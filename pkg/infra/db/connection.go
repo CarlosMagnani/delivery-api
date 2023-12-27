@@ -1,38 +1,36 @@
 package db
 
 import (
-	"delivery_api/cmd/configs"
-	"delivery_api/pkg/models"
 	"fmt"
+	"log"
 	"sync"
 
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+type GormAdapter struct {
+	db *gorm.DB
+}
 
 var (
 	db *gorm.DB
 	once sync.Once
 )
 
-func initDB() {
-	conf := configs.GetDatabase()
-	sc := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disabled", conf.Host, conf.Port, conf.User, conf.Password, conf.Database)
+
+func InitDB() GormAdapter {
+	sc := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", "localhost", 5432, "process", "processdb", "delivery")
+
 	conn, err := gorm.Open(postgres.Open(sc), &gorm.Config{})
 	if err != nil {
-		panic(err)
-	}
-	err = conn.AutoMigrate(&models.User{})
-	if err != nil{
-		panic(err)
+		log.Fatalf("Error loading configuration: %v", err)
 	}
 
-	db = conn
+	return GormAdapter{conn}
 }
 
 
-func OpenConnection() *gorm.DB {
-	once.Do(initDB)
-	return db
+func (adapter GormAdapter) GetDB() *gorm.DB {
+	return adapter.db 
 }
