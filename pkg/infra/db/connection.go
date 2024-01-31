@@ -32,5 +32,6 @@ func InitDB() GormAdapter {
 
 
 func (adapter GormAdapter) GetDB() *gorm.DB {
-	return adapter.db 
+	return adapter.db
+
 }

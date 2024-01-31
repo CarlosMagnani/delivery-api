@@ -32,6 +32,11 @@ func init() {
 	viper.SetDefault("database.user", "process")
     viper.SetDefault("database.password", "processdb")
     viper.SetDefault("database.database", "delivery")
+	err := LoadEnvVars()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	
 }
 
@@ -39,8 +44,13 @@ func Load() error {
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")
 	viper.AddConfigPath(".")
+	
+	err := LoadEnvVars()
+	if err != nil {
+		return err
+	}
 
-	err := viper.ReadInConfig()
+	err = viper.ReadInConfig()
 
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
@@ -48,6 +58,8 @@ func Load() error {
 			return err
 		}
 	}
+
+	
 
 	cfg = new(config)
 
